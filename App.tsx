@@ -11,7 +11,7 @@ import DateHead from './components/DateHead';
 import AddTodo from './components/AddTodo';
 import Empty from './components/Empty';
 import TodoList from './components/TodoList';
-import AsyncStorage from '@react-native-community/async-storage';
+import todosStorage from './storages/todosStorage';
 
 const App = () => {
   const today = new Date();
@@ -23,15 +23,11 @@ const App = () => {
   ]);
 
   useEffect(() => {
-    console.log(todos);
-    async function save() {
-      try {
-        await AsyncStorage.setItem('todos', JSON.stringify(todos));
-      } catch (err) {
-        console.log('Failed to save todos');
-      }
-    }
-    save();
+    todosStorage.get().then(setTodos).catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    todosStorage.set(todos).catch(console.error);
   }, [todos]);
 
   const onInsert = (text: string) => {
